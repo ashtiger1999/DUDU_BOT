@@ -46,6 +46,9 @@ public class BotListener extends ListenerAdapter {
             case "내전생성":
                 handleInHousePartyCreateCommand(event, discordId);
                 break;
+            case "소환사명변경":
+                handleChangeSummonerNameCommand(event);
+                break;
             default:
                 event.reply("❌ 알 수 없는 명령어입니다.").setEphemeral(true).queue(hook -> {
                     // 180초 후에 버튼 메시지를 삭제
