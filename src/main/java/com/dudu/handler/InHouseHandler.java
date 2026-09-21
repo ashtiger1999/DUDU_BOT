@@ -599,9 +599,11 @@ public class InHouseHandler {
                                 Button.primary("party:extend:" + partyId, "마감시간 연장"));
 
                 ActionRow row2 = ActionRow.of(
-                                Button.secondary("inHouse:manage:move:" + partyId, "팀원 이동"),
-
-                                Button.secondary("inHouse:manage:expel:" + partyId, "팀원 내보내기"),
+                                /*
+                                 * Button.secondary("inHouse:manage:move:" + partyId, "팀원 이동"),
+                                 * 
+                                 * Button.secondary("inHouse:manage:expel:" + partyId, "팀원 내보내기"),
+                                 */
 
                                 Button.danger("inHouse:manage:kick:" + partyId, "추방하기"),
 

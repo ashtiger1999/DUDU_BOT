@@ -16,7 +16,7 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 
 @SpringBootApplication
-@EnableScheduling 
+@EnableScheduling
 public class DuduBot {
 
         public static void main(String[] args) throws Exception {
@@ -26,7 +26,12 @@ public class DuduBot {
                 Properties props = PropertiesLoaderUtils.loadProperties(
                                 new ClassPathResource("application.properties"));
 
-                String BOT_TOKEN = props.getProperty("discord.token");
+                String BOT_TOKEN = System.getenv("DISCORD_TOKEN");
+
+                if (BOT_TOKEN == null || BOT_TOKEN.isBlank()) {
+                        throw new IllegalStateException(
+                                        "DISCORD_TOKEN 환경변수가 설정되지 않았습니다.");
+                }
 
                 // JDA 객체 설정 및 생성
                 JDA api = JDABuilder.createDefault(BOT_TOKEN)
@@ -46,7 +51,8 @@ public class DuduBot {
                                         System.out.println("Commands registered!");
                                 });
 
-                System.out.println("//////////////////////////////////////////////////////////////\nBot connected! ver.01.03.19\n//////////////////////////////////////////////////////////////");
+                System.out.println(
+                                "//////////////////////////////////////////////////////////////\nBot connected! ver.01.03.19\n//////////////////////////////////////////////////////////////");
 
         }
 }
