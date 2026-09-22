@@ -432,7 +432,8 @@ public class PartyHandler {
 
                                         PartyDAO.saveMessageId(
                                                         partyId,
-                                                        msg.getId());
+                                                        msg.getId(),
+                                                        msg.getChannel().getId());
                                 });
         }
 

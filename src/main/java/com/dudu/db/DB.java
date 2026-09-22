@@ -59,6 +59,7 @@ public class DB {
          * id = 파티 고유 ID (자동 증가)
          * owner_id = 파티장 Discord ID
          * message_id = 파티 모집 메시지 ID (파티원 갱신 시 필요)
+         * channel_id = 파티 모집 메시지가 게시된 채널 ID
          * created_at = 파티 생성 시간 (자동 설정)
          * deleted_at = 파티 삭제 시간 (기본 6시간 후 자동 삭제, 수동 삭제 시 현재 시간으로 설정)
          * game_type = 파티 유형 (예: 아수라장 = 1, 협곡 = 2, 등등)
@@ -70,6 +71,7 @@ public class DB {
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     owner_id INTEGER NOT NULL,
                     message_id INTEGER,
+                    channel_id INTEGER,
                     created_at DATETIME DEFAULT (DATETIME(CURRENT_TIMESTAMP, '+9 hours')),
                     deleted_at DATETIME DEFAULT (DATETIME(CURRENT_TIMESTAMP, '+15 hours')),
                     game_type INTEGER NOT NULL,

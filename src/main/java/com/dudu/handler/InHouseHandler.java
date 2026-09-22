@@ -490,7 +490,9 @@ public class InHouseHandler {
                                 // 생성된 메시지 ID 저장
                                 PartyDAO.saveMessageId(
                                                 partyId,
-                                                String.valueOf(message.getIdLong()));
+                                                String.valueOf(message.getIdLong()),
+                                                message.getChannel().getId()
+                                        );
                         });
                         return;
                 }
@@ -504,7 +506,9 @@ public class InHouseHandler {
                                         channel.sendMessageEmbeds(embed.build()).setComponents(buttonRows)
                                                         .queue(newMessage -> {// 새 메시지 ID 저장
                                                                 PartyDAO.saveMessageId(partyId,
-                                                                                String.valueOf(newMessage.getIdLong()));
+                                                                                String.valueOf(newMessage.getIdLong()),
+                                                                                newMessage.getChannel().getId()
+                                                                        );
                                                         });
                                 });
         }

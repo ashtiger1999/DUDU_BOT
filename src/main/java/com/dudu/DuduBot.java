@@ -5,11 +5,9 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 
 import com.dudu.db.DB;
-import java.util.Properties;
 
+import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.support.PropertiesLoaderUtils;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 import net.dv8tion.jda.api.requests.GatewayIntent;
@@ -19,12 +17,13 @@ import net.dv8tion.jda.api.utils.MemberCachePolicy;
 @EnableScheduling
 public class DuduBot {
 
+        public static JDA api;
+
         public static void main(String[] args) throws Exception {
 
                 DB.init();
 
-                Properties props = PropertiesLoaderUtils.loadProperties(
-                                new ClassPathResource("application.properties"));
+                SpringApplication.run(DuduBot.class, args);
 
                 String BOT_TOKEN = System.getenv("DISCORD_TOKEN");
 
@@ -34,7 +33,7 @@ public class DuduBot {
                 }
 
                 // JDA 객체 설정 및 생성
-                JDA api = JDABuilder.createDefault(BOT_TOKEN)
+                api = JDABuilder.createDefault(BOT_TOKEN)
                                 .enableIntents(GatewayIntent.GUILD_MEMBERS)
                                 .setMemberCachePolicy(MemberCachePolicy.ALL)
                                 .addEventListeners(new BotListener())
@@ -52,7 +51,7 @@ public class DuduBot {
                                 });
 
                 System.out.println(
-                                "//////////////////////////////////////////////////////////////\nBot connected! ver.01.03.19\n//////////////////////////////////////////////////////////////");
+                                "//////////////////////////////////////////////////////////////\nBot connected! ver.01.03.20\n//////////////////////////////////////////////////////////////");
 
         }
 }

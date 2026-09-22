@@ -320,20 +320,25 @@ public class PartyDAO {
         return 0;
     }
 
-    // save message ID for a party 인베드 전송 후, messageId를 party 테이블에 저장
-    public static void saveMessageId(int partyId, String messageId) {
+    // save message ID and channel ID for a party
+    public static void saveMessageId(
+            int partyId,
+            String messageId,
+            String channelId) {
 
         String sql = """
                     UPDATE party
-                    SET message_id = ?
+                    SET message_id = ?,
+                        channel_id = ?
                     WHERE id = ?
                 """;
 
         try (Connection conn = DB.getConnection();
                 PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            ps.setString(1, String.valueOf(messageId));
-            ps.setInt(2, partyId);
+            ps.setString(1, messageId);
+            ps.setString(2, channelId);
+            ps.setInt(3, partyId);
 
             ps.executeUpdate();
 
@@ -524,5 +529,32 @@ public class PartyDAO {
         }
 
         return 0;
+    }
+
+    // get channel ID by party ID
+    public static String getChannelId(int partyId) {
+
+        String sql = """
+                    SELECT channel_id
+                    FROM party
+                    WHERE id = ?
+                """;
+
+        try (Connection conn = DB.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, partyId);
+
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                return rs.getString("channel_id");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 }
