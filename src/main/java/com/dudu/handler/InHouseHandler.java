@@ -4,6 +4,7 @@ import com.dudu.dao.PartyDAO;
 import com.dudu.dto.InHouseMatchDTO;
 import com.dudu.dto.InHouseTeamDTO;
 import com.dudu.util.PartyEmbedBuilder;
+import com.dudu.DuduBot;
 import com.dudu.dao.InHouseDAO;
 import com.dudu.dao.InHouseMatchDAO;
 
@@ -29,6 +30,7 @@ import net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu;
 import net.dv8tion.jda.api.interactions.components.text.TextInput;
 import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 
 public class InHouseHandler {
@@ -491,8 +493,7 @@ public class InHouseHandler {
                                 PartyDAO.saveMessageId(
                                                 partyId,
                                                 String.valueOf(message.getIdLong()),
-                                                message.getChannel().getId()
-                                        );
+                                                message.getChannel().getId());
                         });
                         return;
                 }
@@ -507,8 +508,7 @@ public class InHouseHandler {
                                                         .queue(newMessage -> {// 새 메시지 ID 저장
                                                                 PartyDAO.saveMessageId(partyId,
                                                                                 String.valueOf(newMessage.getIdLong()),
-                                                                                newMessage.getChannel().getId()
-                                                                        );
+                                                                                newMessage.getChannel().getId());
                                                         });
                                 });
         }
@@ -621,8 +621,9 @@ public class InHouseHandler {
                                 .queue();
         }
 
-        // 내전 취소 버튼
+        // 내전 관리 - 내전 취소 처리
         public void handleInHouseManageCancel(ButtonInteractionEvent event) {
+
                 String btnId = event.getComponentId();
                 String[] parts = btnId.split(":");
                 int partyId = Integer.parseInt(parts[3]);
@@ -639,8 +640,63 @@ public class InHouseHandler {
                         return;
                 }
 
-                // 내전 취소 처리 로직
+                // 내전 관련 메시지 ID 조회
+                String partyMessageId = PartyDAO.getMessageId(partyId);
+                Long teamMessageId = InHouseDAO.getTeamMessageId(partyId);
+                Long matchMessageId = InHouseDAO.getMatchMessageId(partyId);
+
+                // 메시지가 게시된 채널 ID
+                String channelId = PartyDAO.getChannelId(partyId);
+
+                // 내전 취소 처리
                 PartyDAO.cancelParty(partyId);
+
+                // 채널 정보 확인
+                if (channelId != null) {
+
+                        TextChannel channel = DuduBot.api.getTextChannelById(channelId);
+
+                        if (channel != null) {
+
+                                // 내전 모집 임베드 삭제
+                                if (partyMessageId != null) {
+                                        channel.deleteMessageById(partyMessageId).queue(
+                                                        success -> System.out.println(
+                                                                        "내전 모집 임베드 삭제 완료. partyId: "
+                                                                                        + partyId),
+                                                        error -> System.out.println(
+                                                                        "내전 모집 임베드 삭제 실패. partyId: "
+                                                                                        + partyId));
+                                }
+
+                                // 팀 정보 임베드 삭제
+                                if (teamMessageId != null) {
+                                        channel.deleteMessageById(teamMessageId).queue(
+                                                        success -> System.out.println(
+                                                                        "내전 팀 정보 임베드 삭제 완료. partyId: "
+                                                                                        + partyId),
+                                                        error -> System.out.println(
+                                                                        "내전 팀 정보 임베드 삭제 실패. partyId: "
+                                                                                        + partyId));
+                                }
+
+                                // 경기 정보 임베드 삭제
+                                if (matchMessageId != null) {
+                                        channel.deleteMessageById(matchMessageId).queue(
+                                                        success -> System.out.println(
+                                                                        "내전 경기 정보 임베드 삭제 완료. partyId: "
+                                                                                        + partyId),
+                                                        error -> System.out.println(
+                                                                        "내전 경기 정보 임베드 삭제 실패. partyId: "
+                                                                                        + partyId));
+                                }
+
+                        } else {
+                                System.out.println(
+                                                "내전 메시지 삭제 실패 - 채널을 찾을 수 없습니다. channelId: "
+                                                                + channelId);
+                        }
+                }
 
                 event.reply("⚠️ 내전이 취소되었습니다.")
                                 .setEphemeral(true)
