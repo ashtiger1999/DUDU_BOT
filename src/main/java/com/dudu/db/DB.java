@@ -179,6 +179,14 @@ public class DB {
             stmt.execute("PRAGMA foreign_keys = ON");
             stmt.execute(memberSql);
             stmt.execute(partySql);
+
+            // 기존 DB에 channel_id 컬럼이 없는 경우 추가
+            try {
+                stmt.execute("ALTER TABLE party ADD COLUMN channel_id INTEGER");
+            } catch (SQLException e) {
+                // 이미 존재하는 경우 무시
+            }
+            
             stmt.execute(partyJoinSql);
             stmt.execute(inHouseSql);
             stmt.execute(inHouseTeamSql);
